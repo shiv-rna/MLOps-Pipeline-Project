@@ -6,14 +6,15 @@ import numpy as np
 import pandas as pd
 from sklearn.model_selection import train_test_split
 
+
 class DataStrategy(ABC):
     """
     Abstract class defining strategy for handling data
     """
-
     @abstractmethod
     def handle_data(self, data:pd.DataFrame) -> Union[pd.DataFrame, pd.Series]:
         pass
+
 
 class DataPreProcessStrategy(DataStrategy):
     """
@@ -42,14 +43,15 @@ class DataPreProcessStrategy(DataStrategy):
 
             data = data.select_dtypes(include=[np.number])
             # Future Plan: Tokenize review_comment_message
-            cols_to_drop=["customer_zip_code_prefix", "order_item_id"]
+            cols_to_drop = ["customer_zip_code_prefix", "order_item_id"]
             data = data.drop(cols_to_drop, axis =1)
             return data
-        
+
         except Exception as e:
             logging.error("Error in preprocessing data: {}".format(e))
             raise e
-        
+
+
 class DataDivideStrategy(DataStrategy):
     """
     Strategy for dividing data into train & test
@@ -65,4 +67,24 @@ class DataDivideStrategy(DataStrategy):
             return X_train, X_test, y_train, y_test
         except Exception as e:
             logging.error("Error in Spliting data: {}".format(e))
+            raise e
+
+
+class DataCleaning():
+    """
+    Class for cleaning data where it preprcoesses & divides into train and test
+    """
+    def __init__(self, data: pd.DataFrame, strategy:DataStrategy):
+        self.data = data
+        self.strategy = strategy
+
+    def handle_data(self) -> Union[pd.DataFrame, pd.Series]:
+        """
+        Handle data
+        """
+        try:
+            return self.strategy.handle_data(self.data)
+
+        except Exception as e:
+            logging.error(f"Error in handling the data: {e}")
             raise e
