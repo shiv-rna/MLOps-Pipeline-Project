@@ -42,9 +42,11 @@ class DataPreProcessStrategy(DataStrategy):
             data["review_comment_message"].fillna("No review", inplace=True)
 
             data = data.select_dtypes(include=[np.number])
+            # data = data.select_dtypes(include=[np.number])
             # Future Plan: Tokenize review_comment_message
             cols_to_drop = ["customer_zip_code_prefix", "order_item_id"]
             data = data.drop(cols_to_drop, axis =1)
+            logging.info("Preprocessing Performed with handling data")
             return data
 
         except Exception as e:
